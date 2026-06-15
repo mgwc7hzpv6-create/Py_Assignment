@@ -3,8 +3,9 @@ Main execution module for the DLMDSPWP01 assignment.
 
 This module coordinates the program workflow:
 loading the provided CSV datasets, validating their structure,
-storing them in a local SQLite database, and selecting the
-best-fitting ideal functions using the least squares method.
+storing them in a local SQLite database, selecting the best-fitting
+ideal functions using the least squares method, mapping test points
+to the selected ideal functions, and creating visualisations.
 """
 
 from pathlib import Path
@@ -13,6 +14,8 @@ from src.data_loader import CSVDataLoader
 from src.database import DatabaseManager
 from src.exceptions import DataValidationError
 from src.least_squares import find_best_ideal_functions
+from src.test_mapper import TestDataMapper
+from src.visualiser import Visualiser
 
 
 def run_workflow():
@@ -21,7 +24,9 @@ def run_workflow():
 
     This workflow loads the training, ideal function and test datasets,
     validates their required columns, stores them in a SQLite database,
-    and identifies the best-fitting ideal functions for the training data.
+    identifies the best-fitting ideal functions for the training data,
+    maps test points to the selected ideal functions, and creates Bokeh
+    visualisations.
     """
 
     # Define the expected column structures for the input datasets.
@@ -43,13 +48,39 @@ def run_workflow():
     # Identify the best-fitting ideal function for each training function.
     best_matches = find_best_ideal_functions(train_data, ideal_data)
 
-    # Store the matching results in the SQLite database.
-    database.save_dataframe(best_matches, "best_matches")
+    # Map test points to the selected ideal functions.
+    test_mapper = TestDataMapper()
+    mapped_test_points = test_mapper.map_test_points(
+        test_data,
+        ideal_data,
+        best_matches
+    )
 
-    # Also export the results as a CSV file for easier inspection.
-    output_dir = Path("outputs")
-    output_dir.mkdir(exist_ok=True)
-    best_matches.to_csv(output_dir / "best_matches.csv", index=False)
+    # Store the analytical results in the SQLite database.
+    database.save_dataframe(best_matches, "best_matches")
+    database.save_dataframe(mapped_test_points, "mapped_test_points")
+
+    # Export the analytical results as CSV files for easier inspection.
+    output_directory = Path("outputs")
+    output_directory.mkdir(exist_ok=True)
+
+    best_matches.to_csv(output_directory / "best_matches.csv", index=False)
+    mapped_test_points.to_csv(
+        output_directory / "mapped_test_points.csv",
+        index=False
+    )
+
+    # Create Bokeh visualisations for the selected ideal functions.
+    visualiser = Visualiser()
+
+    for _, match_row in best_matches.iterrows():
+        visualiser.plot_training_and_ideal_function(
+            train_data=train_data,
+            ideal_data=ideal_data,
+            mapped_test_points=mapped_test_points,
+            training_function=match_row["training_function"],
+            ideal_function=match_row["best_ideal_function"]
+        )
 
     print("Data loading and database storage completed successfully.")
     print(f"Training data shape: {train_data.shape}")
@@ -59,9 +90,17 @@ def run_workflow():
     print("\nBest-fitting ideal functions:")
     print(best_matches.to_string(index=False))
 
-    print("\nMatching results saved to:")
+    print("\nMapped test points:")
+    print(mapped_test_points.to_string(index=False))
+
+    print("\nResults saved to:")
     print("SQLite table: best_matches")
+    print("SQLite table: mapped_test_points")
     print("CSV file: outputs/best_matches.csv")
+    print("CSV file: outputs/mapped_test_points.csv")
+    print("Bokeh plots: outputs/plots")
+
+    print(f"\nNumber of mapped test points: {len(mapped_test_points)}")
 
 
 def main():
