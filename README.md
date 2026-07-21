@@ -1,6 +1,6 @@
 # DLMDSPWP01 – Ideal Function Selection
 
-The program loads the provided training, ideal-function and test datasets, validates their structure,and stores them in a local SQLite database. It then selects the four best-fitting
+The program loads the provided training, ideal-function and test datasets, validates their structure, and stores them in a local SQLite database. It then selects the four best-fitting
 ideal functions for the training data using the least squares criterion, maps the test points to those functions under the assignment's deviation threshold, and visualises the results.
 
 ## Project Structure
@@ -36,7 +36,8 @@ Python 3.10 or higher. The project depends on:
 * numpy – tolerance-based numerical comparison of x-values
 * sqlalchemy – creating and writing to the SQLite database
 * bokeh – visualising the functions and mapped test points
-* pytest – unit tests
+
+The unit tests use Python's standard-library unittest module and require no additional package.
 
 Install them with:
 
@@ -63,10 +64,10 @@ data, and a summary table of the selected best-fitting functions.
 
 ## Tests
 
-Run the unit tests with:
+Run the unit tests from the project root with:
 
 ```bash
-pytest
+python -m unittest discover -s tests -t .
 ```
 
 Output (excerpt):
