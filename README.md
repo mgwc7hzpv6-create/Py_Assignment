@@ -70,13 +70,3 @@ Run the unit tests from the project root with:
 python -m unittest discover -s tests
 ```
 
-Output (excerpt):
-
-```text
-Data loading and database storage completed successfully.
-Training data shape: (400, 5)
-Ideal functions data shape: (400, 51)
-Test data shape: (100, 2)
-Program completed without validation errors.
-Program execution finished.
-```
