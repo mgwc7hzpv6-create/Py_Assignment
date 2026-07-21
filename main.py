@@ -1,5 +1,5 @@
 """
-Main execution module for the DLMDSPWP01 assignment.
+Main execution module.
 
 This module coordinates the program workflow:
 loading the provided CSV datasets, validating their structure,
@@ -9,7 +9,7 @@ to the selected ideal functions, and creating visualisations.
 """
 
 from pathlib import Path
-
+import pandas as pd
 from src.data_loader import CSVDataLoader
 from src.database import DatabaseManager
 from src.exceptions import DataValidationError
@@ -37,7 +37,10 @@ def run_workflow():
     # Load and validate the provided CSV datasets.
     train_data = CSVDataLoader("data/train.csv").load_csv(train_columns)
     ideal_data = CSVDataLoader("data/ideal.csv").load_csv(ideal_columns)
-    test_data = CSVDataLoader("data/test.csv").load_csv(test_columns)
+    test_loader = CSVDataLoader("data/test.csv")
+    test_data = pd.DataFrame(
+        list(test_loader.load_csv_line_by_line(test_columns))
+        )
 
     # Store the validated datasets in the SQLite database.
     database = DatabaseManager("assignment.db")
@@ -58,14 +61,19 @@ def run_workflow():
 
     # Store the analytical results in the SQLite database.
     database.save_dataframe(best_matches, "best_matches")
-    database.save_dataframe(mapped_test_points, "mapped_test_points")
+
+    # Save only the four columns required.
+    results_table = mapped_test_points[[
+        "x", "y", "delta_y", "ideal_function_number"
+    ]]
+    database.save_dataframe(results_table, "mapped_test_points")
 
     # Export the analytical results as CSV files for easier inspection.
     output_directory = Path("outputs")
     output_directory.mkdir(exist_ok=True)
 
     best_matches.to_csv(output_directory / "best_matches.csv", index=False)
-    mapped_test_points.to_csv(
+    results_table.to_csv(
         output_directory / "mapped_test_points.csv",
         index=False
     )

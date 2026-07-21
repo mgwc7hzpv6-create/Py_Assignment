@@ -1,6 +1,5 @@
 """
-Data loading module for the DLMDSPWP01 assignment.
-
+Data loading.
 This module contains classes for loading CSV files, checking file
 existence and validating required dataset columns.
 """
@@ -9,55 +8,46 @@ from pathlib import Path
 import pandas as pd
 from src.exceptions import DataValidationError
 
-
-class BaseDataHandler:
+class BaseDataHandler (object):
     """
     Base class for handling input data files.
-
-    The class stores the path to an input file and provides a reusable
-    method for checking whether the file exists.
+    Stores the file path and checks the file exists before loading.
     """
 
     def __init__(self, file_path):
         """
         Initialise the data handler with a file path.
-
-        Parameters:
-            file_path (str): Path to the input file.
+        file_path: path to the input file.
         """
         self.file_path = Path(file_path)
 
     def validate_file_exists(self):
         """
         Check whether the input file exists.
-
-        Raises:
-            FileNotFoundError: If the file does not exist.
+        raises:FileNotFoundError: If the file does not exist.
         """
         if not self.file_path.exists():
             raise FileNotFoundError(f"File not found: {self.file_path}")
 
-
 class CSVDataLoader(BaseDataHandler):
     """
     Load and validate CSV datasets.
-
-    This class inherits file validation functionality from BaseDataHandler
-    and extends it with CSV-specific loading and column validation.
+    Inherits file path storage and existence validation from BaseDataHandler.
     """
+
+    def __init__(self,file_path):
+        """
+        Initialise the CSV data loader.
+        file path: path to the CSV file.
+        """
+        super().__init__(file_path)
 
     def load_csv(self, expected_columns):
         """
-        Load a CSV file into a pandas DataFrame and validate its columns.
-
-        Parameters:
-            expected_columns (list): Required column names for the dataset.
-
-        Returns:
-            pandas.DataFrame: Loaded and validated dataset.
-
-        Raises:
-            DataValidationError: If required columns are missing.
+        Load a CSV file and validate its columns.
+        expected_columns: list of required column names
+        return: validated pandas DataFrame
+        raises: DataValidationError if required columns are missing
         """
         self.validate_file_exists()
 
@@ -69,11 +59,35 @@ class CSVDataLoader(BaseDataHandler):
         ]
 
         if missing_columns:
-            # Raise a user-defined exception when the dataset does not
-            # contain the columns required for the assignment workflow.
+            # Missing columns will cause errors later so raise here instead.
             raise DataValidationError(
                 f"Missing required columns in {self.file_path.name}: "
                 f"{missing_columns}"
             )
 
         return data
+    
+    def load_csv_line_by_line(self, expected_columns):          
+        """
+        Load a CSV file row by row using an generator.
+        expected_columns: list of required column names.
+        yields: one pandas series per row
+        raises: DataValidationError: If required columns are missing.
+        """
+        self.validate_file_exists()
+
+        data = pd.read_csv(self.file_path)
+
+        missing_columns = [
+            column for column in expected_columns
+            if column not in data.columns
+        ]
+
+        if missing_columns:
+            raise DataValidationError(
+                f"Missing required columns in {self.file_path.name}: "
+                f"{missing_columns}"
+            )
+        # underscore discards the row index since only the values are needed.
+        for _, row in data.iterrows():
+            yield row
