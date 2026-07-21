@@ -1,67 +1,71 @@
-# Project Overview
+# DLMDSPWP01 – Ideal Function Selection
 
-This repository contains the Python implementation for the DLMDSPWP01 written assignment. The program loads the provided training, ideal function and test datasets, validates their structure and stores them in a local SQLite database.
+The program loads the provided training, ideal-function and test datasets, validates their structure,and stores them in a local SQLite database. It then selects the four best-fitting
+ideal functions for the training data using the least squares criterion, maps the test points to those functions under the assignment's deviation threshold, and visualises the results.
 
-In later stages, the implementation will select the four best-fitting ideal functions using the least squares method and map test data points to the selected functions based on the assignment's deviation criterion.
-
-# Project Structure
+## Project Structure
 
 ```text
 DLMDSPWP01_assignment/
 ├── data/
-│   ├── train.csv
-│   ├── ideal.csv
-│   └── test.csv
+│   ├── [train.csv]
+│   ├── [ideal.csv]
+│   └── [test.csv]
 ├── src/
 │   ├── __init__.py
 │   ├── exceptions.py
 │   ├── data_loader.py
-│   └── database.py
+│   ├── database.py
+│   ├── least_squares.py
+│   ├── test_mapper.py
+│   └── visualiser.py
+├── tests/
+│   ├── test_data_loader.py
+│   ├── test_least_squares.py
+│   └── test_test_mapper.py
 ├── main.py
 ├── requirements.txt
 └── README.md
 ```
 
-# Requirements
+## Requirements
 
-Python 3.10 or higher is required.
+Python 3.10 or higher. The project depends on:
 
-The project uses the following Python packages:
+* pandas – loading and processing the tabular CSV data
+* numpy – tolerance-based numerical comparison of x-values
+* sqlalchemy – creating and writing to the SQLite database
+* bokeh – visualising the functions and mapped test points
+* pytest – unit tests
 
-* pandas for loading and processing tabular CSV data
-* sqlalchemy for creating and writing to the SQLite database
-* numpy for numerical operations including least squares calculations
-* bokeh for visualising the selected functions and mapped test data
-* pytest for unit testing
-
-
-# Installation
-
-Install the required Python packages with:
+Install them with:
 
 ```bash
 python -m pip install -r requirements.txt
 ```
 
-# Workflow
-
-The current workflow performs the following steps:
-
-1. Loads the three provided CSV datasets from the data folder.
-2. Validates the expected column structures and in case of malformed input raises errors.
-3. Stores the validated datasets in a local SQLite database (assignment.db).
-4. Selects the four ideal functions that best fit the training data using the least squares criterion.
-5. Loads test data and maps each point to one of the four chosen ideal functions, provided the deviation does not exceed the  maximum training deviation for that function multiplied by √2.
-6. Saves the mapping results (x, y, delta y, ideal function number) to the database.
-7. Generates Bokeh visualisations of the training data, chosen ideal functions, test points and their deviations, saved as an HTML file in the project root.
-8. Creates the database tables `training_data`, `ideal_functions` and `test_data`.
-
-# Running the Program
+## Running the Program
 
 Place the provided CSV files in the `data/` folder and run:
 
 ```bash
 python main.py
+```
+
+The program loads and validates the three datasets, stores them in the SQLite database, selects the best-fitting ideal function for each of the four training
+functions, maps the test points, writes the results back to the database, and generates the Bokeh plots [in the `outputs/` folder].
+
+## Database
+
+Running the program creates a local SQLite database (`assignment.db`) containing the training data, the ideal functions, the mapped test results, the raw test
+data, and a summary table of the selected best-fitting functions.
+
+## Tests
+
+Run the unit tests with:
+
+```bash
+pytest
 ```
 
 Expected output:
