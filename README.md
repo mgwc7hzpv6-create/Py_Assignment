@@ -8,9 +8,9 @@ ideal functions for the training data using the least squares criterion, maps th
 ```text
 DLMDSPWP01_assignment/
 ├── data/
-│   ├── [train.csv]
-│   ├── [ideal.csv]
-│   └── [test.csv]
+│   ├── train.csv
+│   ├── ideal.csv
+│   └── test.csv
 ├── src/
 │   ├── __init__.py
 │   ├── exceptions.py
