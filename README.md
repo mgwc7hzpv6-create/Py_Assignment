@@ -67,7 +67,7 @@ data, and a summary table of the selected best-fitting functions.
 Run the unit tests from the project root with:
 
 ```bash
-python -m unittest discover -s tests -t .
+python -m unittest discover -s tests
 ```
 
 Output (excerpt):
