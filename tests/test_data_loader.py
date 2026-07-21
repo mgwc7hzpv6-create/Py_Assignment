@@ -13,13 +13,17 @@ from src.exceptions import DataValidationError
 class UnitTestCSVDataLoader(unittest.TestCase):
 
     def test_missing_file_raises_file_not_found(self):
-        '''A non-existent path must raise the standard FileNotFoundError.'''
+        """
+        A non-existent path must raise the standard FileNotFoundError.
+        """
         loader = CSVDataLoader("does_not_exist.csv")
         with self.assertRaises(FileNotFoundError):
             loader.load_csv(["x", "y"])
 
     def test_missing_columns_raises_validation_error(self):
-        '''A CSV without the required columns must raise DataValidationError.'''
+        """
+        A CSV without the required columns must raise DataValidationError.
+        """
         # write a temporary CSV missing the 'y' column
         with tempfile.NamedTemporaryFile(
             mode="w", suffix=".csv", delete=False
