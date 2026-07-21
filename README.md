@@ -68,7 +68,7 @@ Run the unit tests with:
 pytest
 ```
 
-Expected output:
+Output (excerpt):
 
 ```text
 Data loading and database storage completed successfully.
