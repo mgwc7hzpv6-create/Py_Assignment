@@ -57,13 +57,15 @@ class Visualiser(object):
 
         # APA title style
         plot.title.text_font = "Arial"
-        plot.title.text_font_size = "12pt"
+        plot.title.text_font_size = "18pt"
         plot.title.text_font_style = "normal"  
         plot.title.align = "center"
         plot.title.text_color = "black"
 
         # APA style axis 
         for axis in [plot.xaxis, plot.yaxis]:
+            axis.axis_label_text_font_size="16pt"
+            axis.major_label_text_font_size = "14pt"
             axis.axis_label_text_font = "Arial"             
             axis.axis_label_text_font_style = "italic"      
             axis.major_label_text_font = "Arial"            
@@ -108,6 +110,7 @@ class Visualiser(object):
             )
 
         legend = plot.legend[0]
+        legend.label_text_font_size = "14pt"
         legend.border_line_color = None
         legend.label_text_font = "Arial"
         plot.add_layout(legend, "right")
