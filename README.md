@@ -53,7 +53,7 @@ python main.py
 ```
 
 The program loads and validates the three datasets, stores them in the SQLite database, selects the best-fitting ideal function for each of the four training
-functions, maps the test points, writes the results back to the database, and generates the Bokeh plots [in the `outputs/` folder].
+functions, maps the test points, writes the results back to the database, and generates the Bokeh plots (in the `outputs/` folder).
 
 ## Database
 
