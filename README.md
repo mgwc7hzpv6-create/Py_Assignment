@@ -52,8 +52,9 @@ Place the provided CSV files in the `data/` folder and run:
 python main.py
 ```
 
-The program loads and validates the three datasets, stores them in the SQLite database, selects the best-fitting ideal function for each of the four training
-functions, maps the test points, writes the results back to the database, and generates the Bokeh plots (in the `outputs/` folder).
+The program loads and validates the three datasets, stores them in the SQLite database, selects the best-fitting ideal function for each training function,
+maps the test points, and writes the results back to the database. Each run also creates an `outputs/` folder with the result CSVs and the Bokeh plots. This folder
+is not part of the repository, as it is regenerated on every run.
 
 ## Database
 
